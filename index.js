@@ -17,6 +17,5 @@ const parse = (filename) => {
     });
 }
 
-parse('4.txt');
 parse('5.txt');
-
+parse('4.txt');

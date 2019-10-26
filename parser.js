@@ -1,5 +1,9 @@
 /**
- * an example parser. Takes in data, returns the following:
+ * an example parser.
+ * Inputs:
+ * data: array of pages, each page an array of lines
+ *
+ * Outputs:
  * Identifier
  * Date
  * Related pieces
@@ -11,7 +15,7 @@ const parser = (data) => {
      * if they're not, explode really badly.
      */
 
-    console.log(data);
+    // console.log(data);
 
     // in the first page, the first element usually says United Nations, right?
     if (data[0][0] != 'United Nations') {
@@ -57,9 +61,48 @@ const parser = (data) => {
     summary = summary.substring(summary.indexOf(agenda) + agenda.length + 1);
 
     const related = [];
+    // given a line, extract any relevant resolutions.
+    // how a resolution is referenced is nonstandard; however, we have identified some common ways:
+    const resolutionRegexes = [
+        // Resolution <session>/<document>
+        /(?:resolution )(?<session>\d+)\/(?<doc>\d+)/ig,
+        // A/<session>/<doc>(/<addendum>)?
+        /A\/(?<session>[a-zA-Z1-9.]+)\/(?<doc>[a-zA-Z1-9.]+)(?:\/)?(?<mod>[a-zA-Z1-9.]+)?/g,
+        // Resolution <document> A (<roman>)?
+        /resolution (?<doc>\d+) A (?<roman>\([IVX]+\))/gi,
+        // Reference other document?
+        /(?<direct>\w+\/\w+\/\d+\/\d+(\/[a-zA-Z1-9.]+)?)/gi
+    ];
+    // given these named regex groups, re-render the links so they work relative to https://undocs.org/en/
+    const resolutionRegexRender = [
+        ({session, doc}) => {
+            return `A/RES/${session}/${doc}`;
+        },
+        ({session, doc, mod}) => {
+            return `A/${session}/${doc}${mod ? `${mod}` : ''}`;
+        },
+        ({doc, roman}) => {
+            return `A/RES/${doc} ${roman}`;
+        },
+        ({direct}) => {
+            return direct;
+        }
+    ];
+
+    for (let page of data) {
+        for (let line of page) {
+            for (let i = 0; i < resolutionRegexes.length; i++) {
+                for (let match of line.matchAll(resolutionRegexes[i])) {
+                    if (match[0] != identifier) {
+                        related.push(resolutionRegexRender[i](match.groups));
+                    }
+                }
+            }
+        }
+    }
 
 
-    return {organ, identifier, date, summary};
+    return {organ, identifier, date, summary, related};
 }
 
 module.exports = parser;
