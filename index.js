@@ -1,21 +1,40 @@
 const fs = require('fs');
+const extract = require('pdf-text-extract');
 const UNParser = require('./parser');
 
-const parse = (filename) => {
-    fs.readFile(filename, 'utf8', (err, data) => {
-        console.log(`---- ${filename} ----`);
+const fileParse = (filename, parser) => {
+    return new Promise((resolve, reject) => {
+        try {
+            fs.readFile(filename, 'utf8', (err, data) => {
+                console.log(`---- ${filename} ----`);
+                resolve(parse(data, parser));
+            });
+        } catch(err) {
+            reject(err);
+        }
+    });
+};
 
-        data = data.split('\f'); // split into pages
+const parse = (data, parser) => {
+    return new Promise((resolve, reject) => {
+        // split into pages
+        data = data.split('\f');
         for (let i = 0; i < data.length; i++) {
-            data[i] = data[i].split(/\r?\n/); //platform agnostic split
+            //platform agnostic split
+            data[i] = data[i].split(/\r?\n/);
         }
 
         // time to parse the data
-        data = UNParser(data);
-
-        console.log(data);
+        try {
+            resolve(parser(data));
+        } catch (err) {
+            reject(err);
+        }
     });
-}
+};
 
-parse('5.txt');
-parse('4.txt');
+fileParse('5.txt', UNParser).then(data => {
+    console.log(data);
+}).catch(err => {
+    console.log(err);
+});

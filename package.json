@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Uptown-Func/2019-calhacks-backend/issues"
   },
-  "homepage": "https://github.com/Uptown-Func/2019-calhacks-backend#readme"
+  "homepage": "https://github.com/Uptown-Func/2019-calhacks-backend#readme",
+  "devDependencies": {
+    "pdf-text-extract": "^1.5.0"
+  }
 }

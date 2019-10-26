@@ -89,6 +89,8 @@ const parser = (data) => {
         }
     ];
 
+    let title;
+
     for (let page of data) {
         for (let line of page) {
             for (let i = 0; i < resolutionRegexes.length; i++) {
@@ -98,11 +100,14 @@ const parser = (data) => {
                     }
                 }
             }
+            // also search for the title
+            if (line.startsWith(`${session}/${doc}.`)) {
+                title = line.substring(line.indexOf(' ') + 1);
+            }
         }
     }
 
-
-    return {organ, identifier, date, summary, related};
+    return {organ, identifier, date, summary, related, title};
 }
 
 module.exports = parser;
