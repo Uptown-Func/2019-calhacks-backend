@@ -1,0 +1,19 @@
+{
+  "name": "2019-calhacks-backend",
+  "version": "1.0.0",
+  "description": "format UN documents",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Uptown-Func/2019-calhacks-backend.git"
+  },
+  "author": "uptown-func",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Uptown-Func/2019-calhacks-backend/issues"
+  },
+  "homepage": "https://github.com/Uptown-Func/2019-calhacks-backend#readme"
+}
