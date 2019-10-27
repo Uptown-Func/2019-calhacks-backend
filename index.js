@@ -33,8 +33,28 @@ const parse = (data, parser) => {
     });
 };
 
-fileParse('5.txt', UNParser).then(data => {
-    console.log(data);
-}).catch(err => {
-    console.log(err);
+const dataArr = [];
+
+const runner = () => {
+    return new Promise(async (resolve, reject) => {
+        for (let i = 1; i < 6; i++) {
+            await fileParse(`${i}.txt`, UNParser).then(data => {
+                dataArr.push(data);
+            }).catch(err => {
+                reject(err);
+            });
+        }
+        if (dataArr.length === 5) {
+            resolve();
+        } else {
+            reject('dataArr length mismatch');
+        }
+    });
+}
+
+runner().then(() => {
+    return fs.writeFile('sample.json', JSON.stringify(dataArr), () => {
+        console.log('saved');
+    });
 });
+
