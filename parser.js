@@ -15,7 +15,7 @@ const parser = (data) => {
      * if they're not, explode really badly.
      */
 
-    // console.log(data);
+    console.log(data);
 
     // in the first page, the first element usually says United Nations, right?
     if (data[0][0] != 'United Nations') {
@@ -110,4 +110,19 @@ const parser = (data) => {
     return {organ, identifier, date, summary, related, title};
 }
 
-module.exports = parser;
+const cleaner = (data) => {
+  let clean_data = [];
+  for (let page of data) {
+    let clean_page = [];
+    for (let line of page) {
+      if (line !== "") {
+        clean_page.push(line);
+      }
+    }
+    clean_data.push(clean_page)
+  }
+  return clean_data;
+}
+
+//module.exports = parser;
+module.exports = cleaner;
