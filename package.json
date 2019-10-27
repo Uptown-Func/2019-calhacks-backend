@@ -18,5 +18,6 @@
   "homepage": "https://github.com/Uptown-Func/2019-calhacks-backend#readme",
   "devDependencies": {
     "pdf-text-extract": "^1.5.0"
-  }
+  },
+  "dependencies": {}
 }
