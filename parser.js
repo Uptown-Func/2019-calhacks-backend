@@ -154,7 +154,7 @@ const parser = async (data) => {
   });
     tags = tags.filter(x => !common_words.includes(x));
 
-    return {organ, identifier, date, summary, related, title, countries, continents, tags};
+    return {organ, identifier, date, summary, related: [...related], title, countries, continents, tags};
 }
 
 module.exports = parser;
