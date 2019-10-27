@@ -37,8 +37,12 @@ const parser = (data) => {
     const identifier = data[0][3];
     // the regex should probably match:
     // A/RES/session/document no
-    const identifierRegex = /A\/RES\/(\d*)\/(\d*)/;
-    const [_, session, doc] = identifier.match(identifierRegex);
+    const identifierRegex = /A\/RES\/(?<session>\d*)\/(?<doc>\d*)/;
+    try {
+        ({session, doc} = identifier.match(identifierRegex).groups);
+    } catch(err) {
+        throw new Error(`Unable to find session, doc: ${session}, ${doc}`);
+    }
     if (isNaN(parseInt(session))) {
         throw new Error(`session ${session} is not a number`);
     }
@@ -60,7 +64,7 @@ const parser = (data) => {
     // TODO: modify the regex to match multiple agenda numbers
     summary = summary.substring(summary.indexOf(agenda) + agenda.length + 1);
 
-    const related = [];
+    const related = new Set();
     // given a line, extract any relevant resolutions.
     // how a resolution is referenced is nonstandard; however, we have identified some common ways:
     const resolutionRegexes = [
@@ -96,7 +100,7 @@ const parser = (data) => {
             for (let i = 0; i < resolutionRegexes.length; i++) {
                 for (let match of line.matchAll(resolutionRegexes[i])) {
                     if (match[0] != identifier) {
-                        related.push(resolutionRegexRender[i](match.groups));
+                        related.add(resolutionRegexRender[i](match.groups));
                     }
                 }
             }
@@ -107,7 +111,7 @@ const parser = (data) => {
         }
     }
 
-    return {organ, identifier, date, summary, related, title};
+    return {organ, identifier, date, summary, related: [...related], title};
 }
 
 module.exports = parser;
