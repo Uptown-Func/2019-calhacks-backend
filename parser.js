@@ -8,14 +8,23 @@
  * Date
  * Related pieces
  */
+const language = require('@google-cloud/language');
+const stopwords = require('most-common-words-by-language');
 
-const parser = (data) => {
+const client = new language.LanguageServiceClient();
+const countries = require('country-list');
+
+let common_words = stopwords.getWordsList('english', 200);
+let all_countries = countries.getNames();
+let all_continents = ['North America', "South America", "Europe", "Africa", "Antarctica", "Asia", "Oceania", "Americas"]
+
+const parser = async (data) => {
     /**
      * lets make sure the headers seem right.
      * if they're not, explode really badly.
      */
 
-    // console.log(data);
+    //console.log(data);
 
     // in the first page, the first element usually says United Nations, right?
     if (data[0][0] != 'United Nations') {
@@ -97,6 +106,8 @@ const parser = (data) => {
     ];
 
     let title;
+    let countries = [];
+    let continents = [];
 
     for (let page of data) {
         for (let line of page) {
@@ -111,10 +122,39 @@ const parser = (data) => {
             if (line.startsWith(`${session}/${doc}.`)) {
                 title = line.substring(line.indexOf(' ') + 1);
             }
+            // finally search for locations
+            if (line !== '') {
+              for (country of all_countries) {
+                if (line.includes(country) && countries.indexOf(country) == -1) {
+                  countries.push(country);
+                }
+              }
+              for (continent of all_continents) {
+                if (line.includes(continent) && continents.indexOf(continent) == -1) {
+                  continents.push(continent);
+                }
+              }
+            }
         }
     }
 
-    return {organ, identifier, date, summary, related: [...related], title};
+    let tags = [];
+    const document = {
+      content: data.flat().join(" "),
+      type: 'PLAIN_TEXT',
+    };
+
+    const [result] = await client.analyzeEntities({document});
+    const entities = result.entities;
+
+    entities.forEach(entity => {
+    if (entity.type != "NUMBER" && entity.type != "DATE" && tags.indexOf(entity.name) == -1) {
+      tags.push(entity.name);
+    }
+  });
+    tags = tags.filter(x => !common_words.includes(x));
+
+    return {organ, identifier, date, summary, related, title, countries, continents, tags};
 }
 
 module.exports = parser;
