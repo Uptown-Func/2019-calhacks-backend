@@ -18,5 +18,12 @@
   "homepage": "https://github.com/Uptown-Func/2019-calhacks-backend#readme",
   "devDependencies": {
     "pdf-text-extract": "^1.5.0"
+  },
+  "dependencies": {
+    "@google-cloud/language": "^3.5.1",
+    "country-list": "^2.2.0",
+    "lodash": "^4.17.15",
+    "most-common-words-by-language": "^2.17.4",
+    "stopword": "^0.3.3"
   }
 }
