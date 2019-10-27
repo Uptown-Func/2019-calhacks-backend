@@ -83,6 +83,9 @@ const parser = (data) => {
             return `A/RES/${session}/${doc}`;
         },
         ({session, doc, mod}) => {
+            if (doc && doc.endsWith('.')) {
+                doc = doc.substring(0, doc.length - 1);
+            }
             return `A/${session}/${doc}${mod ? `${mod}` : ''}`;
         },
         ({doc, roman}) => {
