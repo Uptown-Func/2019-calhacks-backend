@@ -33,7 +33,7 @@ const parse = (data, parser) => {
     });
 };
 
-fileParse('5.txt', UNParser).then(data => {
+fileParse('4.txt', UNParser).then(data => {
     console.log(data);
 }).catch(err => {
     console.log(err);
