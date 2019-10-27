@@ -111,28 +111,28 @@ const parser = (data) => {
 }
 
 const cleaner = (data) => {
-
+  console.log(data)
   let clean_data = [];
 
   for (let page = 0; page < data.length; page++) {
     let clean_page = [];
 
     //delete numbering/barcode at bottom of page
-    data[page] = data[page].slice(0,-5);
+    //data[page] = data[page].slice(0,-5);
 
     //delete empty list elements and remove page headers
     for (let line = 0; line < data[page].length; line++) {
       //do not delete header of first page
-      if (page != 0 && line == 0) {
-        continue;
-      }
-      //reaches end of resoultions
-      else if (data[page][line].includes("plenary meeting")) {
-        clean_page.push(data[page][line]);
-        page = data.length;
-        break;
-      }
-      else if (data[page][line] !== "") {
+      // if (page != 0 && line == 0) {
+      //   continue;
+      // }
+      // //reaches end of resoultions
+      // else if (data[page][line].includes("plenary meeting")) {
+      //   clean_page.push(data[page][line]);
+      //   page = data.length;
+      //   break;
+      // }
+      if (data[page][line] !== "") {
         clean_page.push(data[page][line]);
       }
     }
